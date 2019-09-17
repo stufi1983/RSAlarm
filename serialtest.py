@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+# ord error in python3
 import time
 import serial
 import mysql.connector
@@ -81,19 +82,19 @@ try:
                             sendstring = "L{}\r\n".format(i+1)
                         if carsnow[i] == "H":
                             sendstring = "H{}\r\n".format(i+1)
-                        #print("send:")
-                        #print(sendstring)
+                        print("send:")
+                        print(sendstring)
                         ser.write(sendstring.encode())
-                        data = ""
-                        while ser.inWaiting() == 0:
-                            time.sleep(0.010)
-                        data = ser.readline()
-                        while data[0]!="A":
-                            data = ser.readline()
+                        #data = ""
+                        #while ser.inWaiting() == 0:
+                        #    time.sleep(0.010)
+                        #data = ser.readline()
+                        #while data[0]!="A":
+                        #    data = ser.readline()
                         #print("get:")
                         #print(data)
                         cars[i] = carsnow[i]
-                        #time.sleep(.250)
+                        time.sleep(.250)
                         
                     
 
@@ -116,7 +117,7 @@ try:
             #if connected != True:
                 #ser.write(serialcmd.encode())
                 #continue
-            if data[0]==request_cmd[0]: #82--> R
+            if ord(data[0])==82: #82--> R
                 bed = (ord(data[1]) - 0x30 +1)
                 print ("Bed: ",bed)
                 
