@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import time
 import serial
 import mysql.connector
@@ -26,7 +26,7 @@ def areEqual(arr1, arr2, n, m, equalval):
   
     # If all elements were same. 
     return True; 
-    
+""""    
 try:
     connection = mysql.connector.connect(host='localhost',
                                          database='antrianku',
@@ -41,7 +41,7 @@ try:
         print("Your connected to database: ", record)
 except Error as e:
     print("Error while connecting to MySQL", e)
-    
+"""
 bed = 0
 serialcmd = "AT\r\n"
 connected = False
@@ -78,12 +78,22 @@ try:
                     print("Update switch")
                     for i in range(0, len(cars) - 1): 
                         if carsnow[i] == "L":
-                            sendstring = "L{}\r\n".format(i)
+                            sendstring = "L{}\r\n".format(i+1)
                         if carsnow[i] == "H":
-                            sendstring = "H{}\r\n".format(i)
+                            sendstring = "H{}\r\n".format(i+1)
+                        #print("send:")
+                        #print(sendstring)
                         ser.write(sendstring.encode())
-                        print(sendstring)
+                        data = ""
+                        while ser.inWaiting() == 0:
+                            time.sleep(0.010)
+                        data = ser.readline()
+                        while data[0]!="A":
+                            data = ser.readline()
+                        #print("get:")
+                        #print(data)
                         cars[i] = carsnow[i]
+                        #time.sleep(.250)
                         
                     
 
@@ -98,6 +108,7 @@ try:
         if ser.inWaiting() > 0:
             data = ser.readline()
             print (data)
+            request_cmd="R"
 
             if data[0]==79 and data[1]==75: #79--> 0, 75 --> K
                 print ('Connected')
@@ -105,8 +116,8 @@ try:
             #if connected != True:
                 #ser.write(serialcmd.encode())
                 #continue
-            if data[0]==82: #82--> R
-                bed = (data[1] - 0x30 + 1)
+            if data[0]==request_cmd[0]: #82--> R
+                bed = (ord(data[1]) - 0x30 +1)
                 print ("Bed: ",bed)
                 
                 print("Is any data already?")
